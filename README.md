@@ -1,3 +1,6 @@
+Website link: https://dhathrirudroju.github.io/SyntaxError-SustainBuy/
+
+
 SustainaBuy: Eco-Friendly E-Commerce Platform
 
 Welcome to SustainaBuy, a conceptual e-commerce platform designed to promote sustainable and ethical shopping. This application uses a simple, front-end structure to showcase products, manage a shopping cart, and implement a unique SustainaPoints reward system based on the eco-friendliness of items purchased.
