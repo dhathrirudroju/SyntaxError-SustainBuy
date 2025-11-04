@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SustainaBuy: Eco-Friendly E-Commerce</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles and setting Inter as the default font */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; /* Light Green background */
+        }
+        .eco-score-circle {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: #e5e7eb; /* Gray for unlit */
+            display: inline-block;
+            margin-left: 2px;
+        }
+        .eco-score-active {
+            background-color: #10b981; /* Emerald Green for lit */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Container -->
+    <div id="app" class="min-h-screen">
+        <!-- Header / Navigation (Always Visible) -->
+        <header class="bg-white shadow-md sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <h1 id="logo-btn" class="text-2xl font-bold text-emerald-600 cursor-pointer hover:text-emerald-700 transition">SustainaBuy</h1>
+                <div class="flex items-center space-x-4">
+                    <button id="view-cart-btn" class="relative p-2 rounded-full bg-emerald-100 hover:bg-emerald-200 transition">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">0</span>
+                    </button>
+                    <div id="user-info" class="text-sm">
+                        <!-- User ID will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Wrapper to manage views -->
+        <div class="relative">
+
+            <!-- 1. Landing Page Section (Front Page - Shown by default) -->
+            <div id="landing-page" class="flex flex-col items-center justify-center text-center px-4 py-20 min-h-[calc(100vh-80px)] bg-emerald-600 text-white transition-opacity duration-500">
+                <h2 class="text-6xl font-extrabold mb-4 sm:text-7xl">SustainaBuy</h2>
+                <p class="text-xl font-light mb-10 max-w-3xl sm:text-2xl">
+                    **Where every purchase helps the planet.** Discover ethically sourced, low-impact products and earn rewards for sustainable choices.
+                </p>
+                <button id="shop-now-btn" class="bg-yellow-400 text-emerald-900 font-bold py-3 px-10 sm:py-4 sm:px-12 rounded-full text-lg sm:text-xl shadow-2xl hover:bg-yellow-300 transition transform hover:scale-105 duration-300">
+                    Start Your Eco-Shopping Journey
+                </button>
+                <div class="mt-16 flex flex-col sm:flex-row sm:space-x-12 space-y-4 sm:space-y-0 text-md sm:text-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l7.59-7.59L20 8l-9 9z"></path></svg>
+                        <span>Ethically Sourced</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 19l-7-7 7-7 1.41 1.41L5.83 12l5.58 5.59L10 19zM15 19l-7-7 7-7 1.41 1.41L10.83 12l5.58 5.59L15 19z"></path></svg>
+                        <span>Zero Waste Packaging</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 15l-3-3 1.41-1.41L11 13.17l3.59-3.59L16 11l-5 5z"></path></svg>
+                        <span>Reward Points</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Product View Section (Hidden by default) -->
+            <main id="product-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-6">Eco-Friendly Products</h2>
+
+                <!-- Filters Section -->
+                <div class="bg-white p-5 rounded-xl shadow-lg mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700">Filter by Eco-Score (Min)</label>
+                        <select id="eco-score-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md">
+                            <option value="0">All Scores (1-5)</option>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Very Good</option>
+                            <option value="3">3 - Good</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="1">1 - Low</option>
+                        </select>
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700">Filter by Category</label>
+                        <select id="category-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700">Filter by Brand</label>
+                        <select id="brand-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md">
+                            <option value="">All Brands</option>
+                        </select>
+                    </div>
+
+                    <div class="col-span-1 flex items-end">
+                        <button id="reset-filters-btn" class="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition">Reset Filters</button>
+                    </div>
+                </div>
+
+                <!-- Product Grid -->
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Products will be injected here -->
+                </div>
+            </main>
+        </div>
+
+
+        <!-- Cart Modal (Hidden by default) -->
+        <div id="cart-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-30 overflow-y-auto">
+            <div class="min-h-screen flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-4xl p-6 rounded-xl shadow-2xl relative">
+                    <button id="close-cart-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Your Cart</h3>
+
+                    <div id="cart-items" class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                        <!-- Cart items will be injected here -->
+                    </div>
+
+                    <div id="cart-summary" class="mt-6 pt-4 border-t border-gray-200">
+                        <div class="flex justify-between font-medium text-lg mb-2">
+                            <span>Subtotal:</span>
+                            <span id="cart-subtotal" class="text-gray-900">₹0.00</span>
+                        </div>
+
+                        <!-- Donation Option -->
+                        <div class="flex justify-between items-center mb-4 p-3 bg-green-50 rounded-lg">
+                            <label for="donation-amount" class="font-medium text-sm text-emerald-700">Add Donation to Environmental Initiative:</label>
+                            <input type="number" id="donation-amount" value="0.00" min="0" step="0.50" class="w-24 text-right border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                        </div>
+
+                        <div class="flex justify-between font-bold text-xl mb-4">
+                            <span>Order Total:</span>
+                            <span id="cart-total" class="text-emerald-600">₹0.00</span>
+                        </div>
+
+                        <button id="checkout-btn" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition">
+                            Proceed to Mock Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Success Modal -->
+        <div id="success-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-40 flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-md p-8 rounded-xl shadow-2xl text-center">
+                <svg class="w-16 h-16 mx-auto text-emerald-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">Order Confirmed!</h3>
+                <p class="text-gray-600 mb-4">Thank you for making a sustainable choice!</p>
+                <p class="text-lg font-semibold text-emerald-600 mb-6">
+                    You earned <span id="earned-points" class="font-extrabold">0</span> SustainaPoints!
+                </p>
+                <button id="close-success-btn" class="py-2 px-6 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+
+        <!-- Reward System Interaction (Always visible) -->
+        <div class="fixed bottom-4 right-4 z-20">
+            <div class="bg-white p-4 rounded-xl shadow-2xl border-t-4 border-emerald-500">
+                <h4 class="font-bold text-lg text-emerald-700 mb-2">SustainaPoints Rewards</h4>
+                <p class="text-sm text-gray-600 mb-3">Your current balance:</p>
+                <div class="flex items-center justify-between">
+                    <span id="current-rewards" class="text-3xl font-extrabold text-emerald-600">0</span>
+                    <span class="text-xl font-semibold text-emerald-600 ml-2">pts</span>
+                </div>
+                <button id="redeem-reward-btn" class="mt-3 w-full py-2 bg-yellow-500 text-white font-medium rounded-md text-sm hover:bg-yellow-600 transition disabled:opacity-50" disabled>
+                    Redeem Discount
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script (Simplified for immediate Local Mode) -->
+    <script type="module">
+        // Import only necessary non-Firebase utilities
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Set Firebase logging level for debugging (kept in case config becomes available later)
+        setLogLevel('Debug');
+
+        // --- Application State ---
+        let cart = [];
+        let rewardPoints = 0; // Rewards will be handled purely in memory
+        let userId = 'Local_Session_' + crypto.randomUUID().substring(0, 8); // Force local ID immediately
+        let dbAvailable = false; // Flag to indicate DB is definitely not connected
+
+        // --- Mock Data (Prices updated to Indian Rupees) ---
+        const MOCK_PRODUCTS = [
+            { id: 1, name: "Organic Cotton T-Shirt", category: "Apparel", brand: "EcoWear", price: 2800.00, ecoScore: 5, imageUrl: "https://placehold.co/400x400/10B981/ffffff?text=Organic+Tee" }, // ~$35
+            { id: 2, name: "Bamboo Toothbrush (4-Pack)", category: "Personal Care", brand: "GreenLife", price: 1000.00, ecoScore: 5, imageUrl: "https://placehold.co/400x400/059669/ffffff?text=Bamboo+Brush" }, // ~$12.50
+            { id: 3, name: "Recycled Paper Notebook", category: "Stationery", brand: "RePrint", price: 720.00, ecoScore: 4, imageUrl: "https://placehold.co/400x400/047857/ffffff?text=Recycled+Note" }, // ~$9
+            { id: 4, name: "Solar-Powered USB Charger", category: "Electronics", brand: "SunTech", price: 5200.00, ecoScore: 4, imageUrl: "https://placehold.co/400x400/34D399/ffffff?text=Solar+Charger" }, // ~$65
+            { id: 5, name: "Hemp Reusable Shopping Bag", category: "Accessories", brand: "EcoWear", price: 1200.00, ecoScore: 5, imageUrl: "https://placehold.co/400x400/14B8A6/ffffff?text=Hemp+Bag" }, // ~$15
+            { id: 6, name: "Water-Saving Shower Head", category: "Home Goods", brand: "AquaSave", price: 4000.00, ecoScore: 3, imageUrl: "https://placehold.co/400x400/065F46/ffffff?text=Water+Head" }, // ~$50
+            { id: 7, name: "Biodegradable Phone Case", category: "Electronics", brand: "BioProtect", price: 1760.00, ecoScore: 5, imageUrl: "https://placehold.co/400x400/0D9488/ffffff?text=Bio+Case" }, // ~$22
+            { id: 8, name: "Upcycled Denim Wallet", category: "Apparel", brand: "ReStyle", price: 2280.00, ecoScore: 3, imageUrl: "https://placehold.co/400x400/0D9488/ffffff?text=Upcycled+Wallet" }, // ~$28.50
+            { id: 9, name: "Recycled Glass Bottle", category: "Home Goods", brand: "GreenLife", price: 1440.00, ecoScore: 4, imageUrl: "https://placehold.co/400x400/047857/ffffff?text=Glass+Bottle" }, // ~$18
+            { id: 10, name: "Non-Toxic Cleaning Wipes", category: "Personal Care", brand: "CleanEarth", price: 800.00, ecoScore: 5, imageUrl: "https://placehold.co/400x400/059669/ffffff?text=Non-Toxic+Wipes" }, // ~$10
+        ];
+
+        // --- Utility Functions ---
+
+        const createEcoScoreHtml = (score) => {
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                const isActive = i <= score;
+                html += `<span class="eco-score-circle ${isActive ? 'eco-score-active' : ''}"></span>`;
+            }
+            return html;
+        };
+
+        const formatCurrency = (amount) => {
+            // Updated to Indian Rupee symbol (₹)
+            return `₹${amount.toFixed(2)}`;
+        };
+
+        // --- View Management ---
+
+        const navigateTo = (viewId) => {
+            const landingPage = document.getElementById('landing-page');
+            const productView = document.getElementById('product-view');
+
+            landingPage.classList.add('hidden');
+            productView.classList.add('hidden');
+
+            if (viewId === 'product-view') {
+                productView.classList.remove('hidden');
+            } else {
+                landingPage.classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+
+        // --- Simplified In-Memory Reward Functions (No Firestore) ---
+
+        // Local function to "add" points (updates memory only)
+        const addRewardPoints = async (pointsToAdd) => {
+            rewardPoints += pointsToAdd;
+            updateRewardUI();
+            console.log(`Locally added ${pointsToAdd} points. New total: ${rewardPoints}`);
+        };
+
+        // Local function to "redeem" points (updates memory only)
+        const redeemReward = async () => {
+            if (rewardPoints < 500) {
+                showMessage("Cannot redeem: Insufficient points.", 'bg-red-500');
+                return;
+            }
+            const pointsToDeduct = 500;
+            rewardPoints -= pointsToDeduct;
+            updateRewardUI();
+            showMessage("Success! 500 points redeemed for a mock discount.", 'bg-green-500');
+        };
+
+        // --- UI Rendering Functions ---
+
+        const renderUserInfo = (status = null) => {
+            const userInfoEl = document.getElementById('user-info');
+            
+            // Removed DB Unavailable status message logic
+            const statusHtml = status ? `
+                <div class="flex items-center mt-1 space-x-2">
+                    <span class="text-red-500 font-bold">(${status})</span>
+                    <button id="reset-session-btn" class="text-xs text-blue-500 hover:text-blue-700 font-semibold underline p-0 m-0 leading-none">
+                        Reset Session
+                    </button>
+                </div>
+            ` : '';
+
+            userInfoEl.innerHTML = `
+                <p class="text-xs text-gray-500">User ID:</p>
+                <p class="text-sm font-semibold text-gray-800 break-all">${userId}</p>
+                ${statusHtml}
+            `;
+            
+            if (status) {
+                 document.getElementById('reset-session-btn').onclick = resetApp;
+            }
+        }
+
+        const updateRewardUI = () => {
+            document.getElementById('current-rewards').textContent = rewardPoints.toLocaleString();
+            const redeemBtn = document.getElementById('redeem-reward-btn');
+
+            // Button text updated to reflect local-only functionality
+            const disableRedeem = rewardPoints < 500;
+            
+            redeemBtn.disabled = disableRedeem;
+            redeemBtn.textContent = disableRedeem ? `Redeem (${500 - rewardPoints} more pts needed)` : 'Redeem Discount (Local)';
+        };
+
+        const renderProducts = () => {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            const ecoScoreFilter = parseInt(document.getElementById('eco-score-filter').value);
+            const categoryFilter = document.getElementById('category-filter').value;
+            const brandFilter = document.getElementById('brand-filter').value;
+
+            const filteredProducts = MOCK_PRODUCTS.filter(p => {
+                const passesScore = p.ecoScore >= ecoScoreFilter;
+                const passesCategory = categoryFilter === "" || p.category === categoryFilter;
+                const passesBrand = brandFilter === "" || p.brand === brandFilter;
+                return passesScore && passesCategory && passesBrand;
+            });
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '<p class="col-span-4 text-center text-gray-500 text-lg">No products match your filters.</p>';
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden';
+                productCard.innerHTML = `
+                    <img src="${product.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/9CA3AF/ffffff?text=Product+Image';" alt="${product.name}" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <p class="text-sm font-semibold text-emerald-600">${product.category}</p>
+                        <h3 class="text-xl font-bold text-gray-800 my-1">${product.name}</h3>
+                        <div class="flex items-center mb-3">
+                            <span class="text-sm text-gray-600 mr-2">Eco-Score:</span>
+                            ${createEcoScoreHtml(product.ecoScore)}
+                        </div>
+                        <p class="text-2xl font-extrabold text-gray-900 mb-4">${formatCurrency(product.price)}</p>
+                        <button data-id="${product.id}" class="add-to-cart-btn w-full py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition">
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(productCard);
+            });
+
+            attachProductEventListeners();
+        };
+
+        const populateFilters = () => {
+            const categories = [...new Set(MOCK_PRODUCTS.map(p => p.category))];
+            const brands = [...new Set(MOCK_PRODUCTS.map(p => p.brand))];
+
+            const categoryFilterEl = document.getElementById('category-filter');
+            categories.forEach(cat => {
+                categoryFilterEl.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+
+            const brandFilterEl = document.getElementById('brand-filter');
+            brands.forEach(brand => {
+                brandFilterEl.innerHTML += `<option value="${brand}">${brand}</option>`;
+            });
+        };
+
+        const renderCart = () => {
+            const itemsContainer = document.getElementById('cart-items');
+            const cartCountEl = document.getElementById('cart-count');
+            itemsContainer.innerHTML = '';
+            
+            // Recalculate total quantity for the badge
+            const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCountEl.textContent = totalQuantity;
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = '<p class="text-center text-gray-500 py-8">Your cart is empty. Start shopping!</p>';
+                document.getElementById('checkout-btn').disabled = true;
+                document.getElementById('checkout-btn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                document.getElementById('checkout-btn').disabled = false;
+                document.getElementById('checkout-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+                cart.forEach(item => {
+                    const product = MOCK_PRODUCTS.find(p => p.id === item.id);
+                    if (!product) return;
+
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'flex items-center space-x-4 border-b pb-4';
+
+                    itemEl.innerHTML = `
+                        <img src="${product.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/9CA3AF/ffffff?text=Item';" class="w-16 h-16 object-cover rounded-lg">
+                        <div class="flex-grow">
+                            <p class="font-semibold text-gray-800">${product.name}</p>
+                            <p class="text-sm text-gray-600">${formatCurrency(product.price)} x ${item.quantity}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button data-id="${item.id}" data-action="decrease" class="cart-qty-btn p-1 bg-gray-200 rounded-full hover:bg-gray-300 transition text-gray-700 w-6 h-6 leading-none">-</button>
+                            <span class="font-medium">${item.quantity}</span>
+                            <button data-id="${item.id}" data-action="increase" class="cart-qty-btn p-1 bg-gray-200 rounded-full hover:bg-gray-300 transition text-gray-700 w-6 h-6 leading-none">+</button>
+                        </div>
+                        <p class="font-bold text-gray-900">${formatCurrency(product.price * item.quantity)}</p>
+                        <button data-id="${item.id}" data-action="remove" class="cart-qty-btn text-red-500 hover:text-red-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    `;
+                    itemsContainer.appendChild(itemEl);
+                });
+                attachCartEventListeners();
+            }
+            updateCartSummary();
+        };
+
+        const updateCartSummary = () => {
+            let subtotal = 0;
+            cart.forEach(item => {
+                const product = MOCK_PRODUCTS.find(p => p.id === item.id);
+                if (product) subtotal += product.price * item.quantity;
+            });
+
+            const donationAmount = parseFloat(document.getElementById('donation-amount').value) || 0;
+            const total = subtotal + donationAmount;
+
+            document.getElementById('cart-subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('cart-total').textContent = formatCurrency(total);
+        };
+
+        const showMessage = (message, bgColor = 'bg-emerald-500') => {
+            // A simple temporary message box (non-blocking alternative to alert)
+            const msgBox = document.createElement('div');
+            msgBox.className = `fixed bottom-20 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-lg text-white font-medium ${bgColor} transition-opacity duration-300 z-50`;
+            msgBox.textContent = message;
+            document.body.appendChild(msgBox);
+            setTimeout(() => {
+                msgBox.classList.add('opacity-0');
+                msgBox.addEventListener('transitionend', () => msgBox.remove());
+            }, 3000);
+        };
+
+        // --- Core Application Logic ---
+
+        const addToCart = (productId) => {
+            const id = parseInt(productId);
+            const existingItem = cart.find(item => item.id === id);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id: id, quantity: 1 });
+            }
+            showMessage('Item added to cart!', 'bg-emerald-500');
+            
+            // Update the cart badge and modal contents
+            renderCart();
+        };
+
+        const handleCartQuantityChange = (id, action) => {
+            const index = cart.findIndex(item => item.id === parseInt(id));
+            if (index === -1) return;
+
+            if (action === 'increase') {
+                cart[index].quantity += 1;
+            } else if (action === 'decrease') {
+                cart[index].quantity -= 1;
+                if (cart[index].quantity <= 0) {
+                    cart.splice(index, 1); // Remove item if quantity drops to zero
+                }
+            } else if (action === 'remove') {
+                cart.splice(index, 1);
+            }
+            renderCart();
+        };
+
+        const mockCheckout = async () => {
+            if (cart.length === 0) return;
+
+            // 1. Calculate points earned
+            let pointsEarned = 0;
+
+            cart.forEach(item => {
+                const product = MOCK_PRODUCTS.find(p => p.id === item.id);
+                if (product) {
+                    // Eco-friendly products (Score 4+) earn points faster
+                    if (product.ecoScore >= 4) {
+                        // Example: 1 point for every ₹50 spent on high eco-score items
+                        pointsEarned += Math.floor((product.price * item.quantity) / 50); 
+                    } else {
+                        // Example: 1 point for every ₹100 spent on regular items
+                         pointsEarned += Math.floor((product.price * item.quantity) / 100);
+                    }
+                }
+            });
+
+            // 2. Add points locally (since DB is unavailable)
+            await addRewardPoints(pointsEarned);
+
+            // 3. Show success modal
+            document.getElementById('earned-points').textContent = pointsEarned.toLocaleString();
+            document.getElementById('cart-modal').classList.add('hidden');
+            document.getElementById('success-modal').classList.remove('hidden');
+
+            // 4. Reset state
+            cart = [];
+            document.getElementById('donation-amount').value = '0.00';
+            renderCart();
+            renderProducts();
+        };
+
+        const resetApp = () => {
+            // Generate a new temporary local ID on reset
+            userId = 'Local_Session_' + crypto.randomUUID().substring(0, 8);
+            cart = [];
+            rewardPoints = 0;
+            renderUserInfo(null); // No status message
+            updateRewardUI();
+            renderCart();
+            renderProducts();
+            navigateTo('landing-page');
+            showMessage('Application session reset.', 'bg-blue-500');
+        }
+
+
+        // --- Event Listener Attachments ---
+
+        const attachProductEventListeners = () => {
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.onclick = (e) => {
+                    const productId = e.currentTarget.dataset.id;
+                    addToCart(productId);
+                };
+            });
+        };
+
+        const attachCartEventListeners = () => {
+            document.querySelectorAll('.cart-qty-btn').forEach(button => {
+                button.onclick = (e) => {
+                    const productId = e.currentTarget.dataset.id;
+                    const action = e.currentTarget.dataset.action;
+                    handleCartQuantityChange(productId, action);
+                };
+            });
+        };
+
+        const attachGlobalEventListeners = () => {
+            // View Navigation Listeners
+            document.getElementById('shop-now-btn').onclick = () => navigateTo('product-view');
+            document.getElementById('logo-btn').onclick = () => navigateTo('landing-page');
+
+            // Filter listeners
+            document.getElementById('eco-score-filter').onchange = renderProducts;
+            document.getElementById('category-filter').onchange = renderProducts;
+            document.getElementById('brand-filter').onchange = renderProducts;
+            document.getElementById('reset-filters-btn').onclick = () => {
+                document.getElementById('eco-score-filter').value = '0';
+                document.getElementById('category-filter').value = '';
+                document.getElementById('brand-filter').value = '';
+                renderProducts();
+            };
+
+            // Cart Modal listeners
+            document.getElementById('view-cart-btn').onclick = () => {
+                renderCart();
+                document.getElementById('cart-modal').classList.remove('hidden');
+            };
+            document.getElementById('close-cart-btn').onclick = () => document.getElementById('cart-modal').classList.add('hidden');
+            document.getElementById('checkout-btn').onclick = mockCheckout;
+            document.getElementById('close-success-btn').onclick = () => {
+                document.getElementById('success-modal').classList.add('hidden');
+                navigateTo('product-view'); // Go back to shopping after success
+            }
+            // Update summary when donation amount changes
+            document.getElementById('donation-amount').oninput = updateCartSummary;
+
+            // Reward listener
+            document.getElementById('redeem-reward-btn').onclick = redeemReward;
+        };
+
+
+        // --- Initialization ---
+
+        window.onload = () => {
+            // Quick Solution: Bypass Firebase init and immediately set to local mode
+            renderUserInfo(null); // Changed to null to remove DB Unavailable message
+            populateFilters();
+            renderProducts();
+            renderCart();
+            updateRewardUI();
+            attachGlobalEventListeners();
+            navigateTo('landing-page'); // Start on the new front page!
+            // Removed: showMessage("Running in Local Mode. Persistence and sharing are disabled.", 'bg-red-600');
+        };
+    </script>
+</body>
+</html>
